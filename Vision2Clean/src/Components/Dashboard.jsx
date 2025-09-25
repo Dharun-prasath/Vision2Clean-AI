@@ -83,8 +83,8 @@ const recentRequests = [
     { id: 105, user: "User5", status: "Pending", date: "2024-06-14", progress: 30 },
 ];
 
-const drawerWidth = 240;
-const miniDrawerWidth = 56;
+const drawerWidth = 50;
+const miniDrawerWidth = 26;
 
 // --- REUSABLE COMPONENTS ---
 
