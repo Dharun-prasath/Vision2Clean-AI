@@ -382,7 +382,7 @@ export default function DashboardEnhanced() {
                 Vision2Clean.ai
               </Typography>
 
-              <Box sx={{ display: { xs: "none", sm: "block" }, width: 360 }}>
+              <Box sx={{ display: { xs: "none", sm: "block" }, width: 360, ml: 'auto', mr: 2 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -398,15 +398,17 @@ export default function DashboardEnhanced() {
               </Tooltip>
             </Box>
 
-            <Badge badgeContent={notifications.filter((n) => !n.read).length} color="error" sx={{ mr: 2 }}>
-              <IconButton color="inherit" onClick={handleNotifMenuOpen} aria-label="open notifications">
-                <NotificationsIcon />
-              </IconButton>
-            </Badge>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Badge badgeContent={notifications.filter((n) => !n.read).length} color="error">
+                <IconButton color="inherit" onClick={handleNotifMenuOpen} aria-label="open notifications">
+                  <NotificationsIcon />
+                </IconButton>
+              </Badge>
 
-            <IconButton color="inherit" onClick={handleUserMenuOpen} aria-label="open account menu">
-              <AccountCircle />
-            </IconButton>
+              <IconButton color="inherit" onClick={handleUserMenuOpen} aria-label="open account menu">
+                <AccountCircle />
+              </IconButton>
+            </Box>
 
             <Menu anchorEl={userAnchorEl} open={Boolean(userAnchorEl)} onClose={handleUserMenuClose}>
               <MenuItem disabled>{sampleUser.name}</MenuItem>
@@ -460,11 +462,10 @@ export default function DashboardEnhanced() {
           <Box sx={{ overflow: "auto" }}>
             <List>
               {[
-                { text: "Dashboard", icon: <DashboardIcon />, selected: true },
-                { text: "Analytics", icon: <AssessmentIcon /> },
+                { text: "Analytics", icon: <AssessmentIcon />, selected: true },
                 { text: "Settings", icon: <SettingsIcon /> },
               ].map(({ text, icon, selected }) => (
-                <Tooltip key={text} title={!drawerOpen ? text : ""} placement="right">
+                <Tooltip key={text} title={drawerOpen ? "" : text} placement="right">
                   <ListItemButton selected={selected} sx={{ px: drawerOpen ? 2 : 1.25 }}>
                     <ListItemIcon sx={{ color: "inherit", minWidth: 0, mr: drawerOpen ? 1.5 : 0, justifyContent: "center" }}>{icon}</ListItemIcon>
                     <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0, transition: (t) => t.transitions.create("opacity") }} />
