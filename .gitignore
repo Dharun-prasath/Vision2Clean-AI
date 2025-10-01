@@ -37,6 +37,9 @@ temp/
 *.swp
 *.bak
 *.tmp
+*.jpg
+*.png
+*.jpeg
 
 # Dependency directories
 bower_components/
@@ -56,3 +59,4 @@ __pycache__/
 
 # VS Code settings
 .history/
+Dataset/
