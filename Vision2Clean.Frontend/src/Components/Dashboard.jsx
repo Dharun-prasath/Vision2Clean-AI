@@ -545,7 +545,7 @@ const RecentRequests = React.memo(({ requests, loading = false, error = null, on
 // -----------------------
 // Main Dashboard Component (Production-Ready)
 // -----------------------
-export default function DashboardEnhanced() {
+export default function DashboardEnhanced({ onNavigate, currentView = 'dashboard' }) {
   const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");
   
   // Use custom hook for localStorage with error handling
@@ -728,12 +728,23 @@ export default function DashboardEnhanced() {
           <Box sx={{ overflow: 'auto', display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)' }}>
             <List>
               {[
-                { text: 'Dashboard', icon: <DashboardIcon />, selected: true },
-                { text: 'Analytics', icon: <AssessmentIcon /> },
-                { text: 'Settings', icon: <SettingsIcon /> },
-              ].map(({ text, icon, selected }) => (
+                { text: 'Dashboard', icon: <DashboardIcon />, view: 'dashboard' },
+                { text: 'Analytics', icon: <AssessmentIcon />, view: 'analytics' },
+                { text: 'Settings', icon: <SettingsIcon />, view: 'settings' },
+              ].map(({ text, icon, view }) => (
                 <Tooltip key={text} title={drawerOpen ? '' : text} placement="right">
-                  <ListItemButton selected={selected} sx={{ px: drawerOpen ? 2.5 : 1.5, py: 1.25 }}>
+                  <ListItemButton 
+                    selected={currentView === view} 
+                    onClick={() => onNavigate && onNavigate(view)}
+                    sx={{ 
+                      px: drawerOpen ? 2.5 : 1.5, 
+                      py: 1.25,
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: 'action.hover',
+                      }
+                    }}
+                  >
                     <ListItemIcon sx={{ color: 'inherit', minWidth: 0, mr: drawerOpen ? 1.5 : 0, justifyContent: 'center' }}>{icon}</ListItemIcon>
                     <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0, transition: (t) => t.transitions.create('opacity') }} />
                   </ListItemButton>
