@@ -688,6 +688,12 @@ export default function DashboardEnhanced({ onNavigate, currentView = 'dashboard
             </Box>
 
             <Stack direction="row" spacing={1} alignItems="center">
+              <Tooltip title="Keyboard shortcuts: Alt+D (Dashboard), Alt+A (Analytics), Alt+S (Settings)">
+                <IconButton size="small" color="inherit">
+                  <InfoIcon />
+                </IconButton>
+              </Tooltip>
+
               <Tooltip title={darkMode ? "Switch to light" : "Switch to dark"}>
                 <IconButton onClick={() => setDarkMode((d) => !d)} aria-label="toggle theme">
                   {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
