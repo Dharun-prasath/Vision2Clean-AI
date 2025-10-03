@@ -573,6 +573,37 @@ export default function DashboardEnhanced({ onNavigate, currentView = 'dashboard
     }
   }, []);
 
+  // Keyboard shortcuts for navigation
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.altKey) {
+        switch (event.key) {
+          case 'd':
+          case 'D':
+            event.preventDefault();
+            // Already on dashboard, refresh data
+            refreshData();
+            break;
+          case 'a':
+          case 'A':
+            event.preventDefault();
+            onNavigate && onNavigate('analytics');
+            break;
+          case 's':
+          case 'S':
+            event.preventDefault();
+            onNavigate && onNavigate('settings');
+            break;
+          default:
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [onNavigate, refreshData]);
+
   const [userAnchorEl, setUserAnchorEl] = useState(null);
   const [notifAnchorEl, setNotifAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState(notificationsSeed);
@@ -835,8 +866,34 @@ export default function DashboardEnhanced({ onNavigate, currentView = 'dashboard
                 <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Quick Actions</Typography>
                 <Box sx={{ display: 'flex', gap: 1, mt: 2, flexWrap: 'wrap' }}>
                   <Button variant="contained" startIcon={<AddCircleOutline />}>New Request</Button>
-                  <Button variant="outlined">Manage Models</Button>
+                  <Button 
+                    variant="outlined" 
+                    startIcon={<AssessmentIcon />}
+                    onClick={() => onNavigate && onNavigate('analytics')}
+                  >
+                    View Analytics
+                  </Button>
                   <Button variant="outlined">Export CSV</Button>
+                </Box>
+
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="caption" color="text.secondary">Navigation</Typography>
+                  <Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>
+                    <Button 
+                      size="small" 
+                      onClick={() => onNavigate && onNavigate('analytics')}
+                      sx={{ textTransform: 'none' }}
+                    >
+                      📊 Analytics Dashboard
+                    </Button>
+                    <Button 
+                      size="small" 
+                      onClick={() => onNavigate && onNavigate('settings')}
+                      sx={{ textTransform: 'none' }}
+                    >
+                      ⚙️ Settings
+                    </Button>
+                  </Box>
                 </Box>
 
                 <Box sx={{ mt: 2 }}>

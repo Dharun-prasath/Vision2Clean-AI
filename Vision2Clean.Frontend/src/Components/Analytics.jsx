@@ -694,6 +694,37 @@ const Analytics = ({ onNavigate, currentView = 'analytics' }) => {
 
   const { data, loading, error, refetch } = useAnalyticsData(timePeriod);
 
+  // Keyboard shortcuts for navigation
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.altKey) {
+        switch (event.key) {
+          case 'd':
+          case 'D':
+            event.preventDefault();
+            onNavigate && onNavigate('dashboard');
+            break;
+          case 'a':
+          case 'A':
+            event.preventDefault();
+            // Already on analytics, do nothing or refresh
+            refetch();
+            break;
+          case 's':
+          case 'S':
+            event.preventDefault();
+            onNavigate && onNavigate('settings');
+            break;
+          default:
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [onNavigate, refetch]);
+
   // Create theme based on dark mode preference
   const muiTheme = useMemo(() => 
     createTheme({
@@ -935,6 +966,12 @@ const Analytics = ({ onNavigate, currentView = 'analytics' }) => {
                 >
                   Refresh
                 </Button>
+
+                <Tooltip title="Keyboard shortcuts: Alt+D (Dashboard), Alt+A (Analytics), Alt+S (Settings)">
+                  <IconButton size="small" color="primary">
+                    <Info />
+                  </IconButton>
+                </Tooltip>
               </Stack>
             </Box>
 
@@ -954,6 +991,46 @@ const Analytics = ({ onNavigate, currentView = 'analytics' }) => {
               </Grid>
             ))}
           </Grid>
+
+          {/* Quick Navigation */}
+          <Box sx={{ mb: 4 }}>
+            <Paper elevation={2} sx={{ p: 2, borderRadius: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+                <Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Quick Navigation</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Access other sections of Vision2Clean AI
+                  </Typography>
+                </Box>
+                <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
+                  <Button 
+                    variant="outlined" 
+                    startIcon={<DashboardIcon />}
+                    onClick={() => onNavigate && onNavigate('dashboard')}
+                    size="small"
+                  >
+                    Dashboard
+                  </Button>
+                  <Button 
+                    variant="outlined" 
+                    startIcon={<SettingsIcon />}
+                    onClick={() => onNavigate && onNavigate('settings')}
+                    size="small"
+                  >
+                    Settings
+                  </Button>
+                  <Button 
+                    variant="contained" 
+                    startIcon={<FileDownload />}
+                    onClick={handleExport}
+                    size="small"
+                  >
+                    Export Data
+                  </Button>
+                </Stack>
+              </Box>
+            </Paper>
+          </Box>
 
           {/* Tab Content */}
           {tabValue === 0 && (
