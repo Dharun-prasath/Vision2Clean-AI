@@ -99,6 +99,7 @@ import {
   Tooltip as RechartsTooltip,
   Legend,
   PieChart as RechartsPieChart,
+  Pie,
   Cell,
   RadialBarChart,
   RadialBar,
@@ -448,8 +449,8 @@ const CategoryDistribution = React.memo(({ data, loading }) => {
         <Box sx={{ height: 300, display: 'flex', alignItems: 'center' }}>
           <Box sx={{ flex: 1 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <RechartsPieChart>
-                <RechartsPieChart 
+              <RechartsPieChart data={data}>
+                <Pie
                   data={data}
                   cx="50%"
                   cy="50%"
@@ -461,7 +462,7 @@ const CategoryDistribution = React.memo(({ data, loading }) => {
                   {data?.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
-                </RechartsPieChart>
+                </Pie>
                 <RechartsTooltip 
                   formatter={(value, name) => [`${value}%`, name]}
                   contentStyle={{
@@ -870,6 +871,24 @@ const Analytics = ({ onNavigate, currentView = 'analytics' }) => {
         {/* Main Content */}
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Toolbar />
+          
+          {/* Breadcrumb Navigation */}
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              <Button 
+                color="inherit" 
+                size="small" 
+                onClick={() => onNavigate && onNavigate('dashboard')}
+                sx={{ textTransform: 'none', minWidth: 'auto', p: 0.5 }}
+              >
+                Dashboard
+              </Button>
+              {' / '}
+              <Typography component="span" sx={{ fontWeight: 600 }}>
+                Analytics
+              </Typography>
+            </Typography>
+          </Box>
           
           {/* Header */}
           <Box sx={{ mb: 4 }}>

@@ -779,6 +779,24 @@ export default function DashboardEnhanced({ onNavigate, currentView = 'dashboard
         <Box component="main" sx={{ flexGrow: 1, p: 3, transition: (t) => t.transitions.create(['margin', 'width']), marginLeft: `${drawerOpen ? DRAWER_WIDTH : MINI_DRAWER_WIDTH}px`, width: `calc(100% - ${drawerOpen ? DRAWER_WIDTH : MINI_DRAWER_WIDTH}px)` }}>
           <Toolbar />
 
+          {/* Breadcrumb Navigation */}
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              <Typography component="span" sx={{ fontWeight: 600 }}>
+                Dashboard
+              </Typography>
+              {' / '}
+              <Button 
+                color="inherit" 
+                size="small" 
+                onClick={() => onNavigate && onNavigate('analytics')}
+                sx={{ textTransform: 'none', minWidth: 'auto', p: 0.5 }}
+              >
+                Analytics
+              </Button>
+            </Typography>
+          </Box>
+
           <Grid container spacing={3} alignItems="stretch">
             {stats.map((s) => (
               <StatCard 
