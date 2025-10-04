@@ -112,7 +112,6 @@ class ApiClient {
   private client: AxiosInstance;
   private cache = new ApiCache();
   private requestQueue = new RequestQueue();
-  private retryQueue = new Set<string>();
 
   constructor() {
     this.client = axios.create({
@@ -131,25 +130,26 @@ class ApiClient {
   private setupInterceptors(): void {
     // Request interceptor
     this.client.interceptors.request.use(
-      (config) => {
+      (requestConfig) => {
         // Add auth token
         const token = this.getAuthToken();
-        if (token && !config.skipAuth) {
-          config.headers.Authorization = `Bearer ${token}`;
+        const reqConfig = requestConfig as RequestConfig;
+        if (token && !reqConfig.skipAuth) {
+          requestConfig.headers.Authorization = `Bearer ${token}`;
         }
 
         // Add request timestamp
-        config.headers['X-Request-Timestamp'] = new Date().toISOString();
+        requestConfig.headers['X-Request-Timestamp'] = new Date().toISOString();
 
         // Log request in development
         if (config.app.debug) {
-          console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`, {
-            data: config.data,
-            params: config.params,
+          console.log(`🚀 API Request: ${requestConfig.method?.toUpperCase()} ${requestConfig.url}`, {
+            data: requestConfig.data,
+            params: requestConfig.params,
           });
         }
 
-        return config;
+        return requestConfig;
       },
       (error) => {
         console.error('Request interceptor error:', error);
@@ -229,7 +229,7 @@ class ApiClient {
     return false;
   }
 
-  private async retryRequest(originalRequest: RequestConfig, error: AxiosError): Promise<any> {
+  private async retryRequest(originalRequest: RequestConfig, _error: AxiosError): Promise<any> {
     const retryCount = ((originalRequest as any)._retryCount ?? 0) + 1;
     const retryDelay = originalRequest?.retryDelay ?? config.api.retryDelay;
 
@@ -257,9 +257,10 @@ class ApiClient {
     if (error.response) {
       // Server responded with error status
       apiError.status = error.response.status;
-      apiError.message = error.response.data?.message || error.message;
-      apiError.code = error.response.data?.code;
-      apiError.details = error.response.data?.details;
+      const responseData = error.response.data as any;
+      apiError.message = responseData?.message || error.message;
+      apiError.code = responseData?.code;
+      apiError.details = responseData?.details;
     } else if (error.request) {
       // Network error
       apiError.message = 'Network error. Please check your connection.';
