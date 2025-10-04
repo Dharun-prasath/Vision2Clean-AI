@@ -1,34 +1,129 @@
 {
-  "name": "vision2clean",
+  "name": "vision2clean-ai-frontend",
+  "description": "Vision2Clean AI - Advanced waste detection and management system with real-time analytics and AI-powered insights",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
+  "author": {
+    "name": "Dharun Prasath",
+    "email": "contact@vision2clean.ai",
+    "url": "https://github.com/Dharun-prasath"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dharun-prasath/Vision2Clean-AI.git"
+  },
+  "homepage": "https://vision2clean.ai",
+  "keywords": [
+    "ai",
+    "waste-detection",
+    "computer-vision",
+    "yolo",
+    "react",
+    "material-ui",
+    "analytics",
+    "environmental-tech",
+    "smart-city",
+    "sustainability"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "vite --host --port 3000",
+    "build": "npm run lint && npm run type-check && vite build",
+    "build:staging": "npm run lint && vite build --mode staging",
+    "build:production": "npm run lint && npm run type-check && vite build --mode production",
+    "preview": "vite preview --port 3001",
+    "serve": "npm run build && npm run preview",
+    "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext js,jsx,ts,tsx --fix",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "analyze": "npm run build && npx vite-bundle-analyzer dist",
+    "clean": "rm -rf dist node_modules/.vite",
+    "reinstall": "npm run clean && npm install",
+    "docker:build": "docker build -t vision2clean-frontend .",
+    "docker:run": "docker run -p 3000:80 vision2clean-frontend",
+    "deploy:vercel": "vercel --prod",
+    "deploy:netlify": "netlify deploy --prod --dir=dist"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.2",
     "@mui/material": "^7.3.2",
+    "@mui/lab": "^6.0.0-beta.16",
+    "@mui/x-charts": "^7.22.2",
+    "@mui/x-data-grid": "^7.22.2",
+    "@mui/x-date-pickers": "^7.22.2",
+    "axios": "^1.7.7",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.23.22",
+    "js-cookie": "^3.0.5",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "recharts": "^3.2.1"
+    "react-error-boundary": "^4.1.2",
+    "react-helmet-async": "^2.0.5",
+    "react-hook-form": "^7.54.0",
+    "react-hot-toast": "^2.4.1",
+    "react-query": "^3.39.3",
+    "react-router-dom": "^6.28.0",
+    "react-virtualized-auto-sizer": "^1.0.24",
+    "react-window": "^1.8.8",
+    "recharts": "^3.2.1",
+    "web-vitals": "^4.2.4",
+    "workbox-window": "^7.3.0",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/js-cookie": "^3.0.6",
+    "@types/lodash": "^4.17.13",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
+    "@types/react-window": "^1.8.8",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
     "@vitejs/plugin-react": "^5.0.0",
+    "@vitest/coverage-v8": "^2.1.8",
+    "@vitest/ui": "^2.1.8",
     "eslint": "^9.33.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
-    "vite": "^7.1.2"
+    "jsdom": "^26.0.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vite": "^7.1.2",
+    "vite-bundle-analyzer": "^0.12.1",
+    "vite-plugin-pwa": "^0.21.1",
+    "vitest": "^2.1.8"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
