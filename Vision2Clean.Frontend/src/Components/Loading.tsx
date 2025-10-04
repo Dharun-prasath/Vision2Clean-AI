@@ -7,7 +7,6 @@ import {
   Typography,
   Card,
   CardContent,
-  Stack,
   useTheme,
   alpha,
 } from '@mui/material';

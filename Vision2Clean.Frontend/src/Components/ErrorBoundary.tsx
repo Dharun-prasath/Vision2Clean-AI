@@ -7,7 +7,6 @@ import {
   Typography,
   Alert,
   Collapse,
-  IconButton,
   Stack,
   Chip,
 } from '@mui/material';
@@ -338,7 +337,7 @@ export const withErrorBoundary = <P extends object>(
 
 // Hook for error handling in functional components
 export const useErrorHandler = () => {
-  const handleError = React.useCallback((error: Error, errorInfo?: any) => {
+  const handleError = React.useCallback((error: Error, _errorInfo?: any) => {
     // Throw error to be caught by nearest error boundary
     throw error;
   }, []);
