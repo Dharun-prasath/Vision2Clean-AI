@@ -768,6 +768,7 @@ export default function DashboardEnhanced({ onNavigate, currentView = 'dashboard
                 { text: 'Dashboard', icon: <DashboardIcon />, view: 'dashboard' },
                 { text: 'Analytics', icon: <AssessmentIcon />, view: 'analytics' },
                 { text: 'Settings', icon: <SettingsIcon />, view: 'settings' },
+                { text: 'Error Demo', icon: <ErrorIcon />, view: 'error-demo' },
               ].map(({ text, icon, view }) => (
                 <Tooltip key={text} title={drawerOpen ? '' : text} placement="right">
                   <ListItemButton 

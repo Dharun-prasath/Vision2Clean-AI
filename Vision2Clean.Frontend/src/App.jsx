@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import Dashboard from './Components/Dashboard.jsx'
 import Analytics from './Components/Analytics.jsx'
+import ErrorBoundary from './Components/ErrorBoundary.tsx'
+import ErrorBoundaryDemo from './Components/ErrorBoundaryDemo.jsx'
 
 function App() {
   const [currentView, setCurrentView] = useState('dashboard')
@@ -12,18 +14,43 @@ function App() {
   const renderView = () => {
     switch (currentView) {
       case 'analytics':
-        return <Analytics onNavigate={handleNavigation} currentView={currentView} />
+        return (
+          <ErrorBoundary level="page" resetOnPropsChange={true}>
+            <Analytics onNavigate={handleNavigation} currentView={currentView} />
+          </ErrorBoundary>
+        )
       case 'dashboard':
-        return <Dashboard onNavigate={handleNavigation} currentView={currentView} />
+        return (
+          <ErrorBoundary level="page" resetOnPropsChange={true}>
+            <Dashboard onNavigate={handleNavigation} currentView={currentView} />
+          </ErrorBoundary>
+        )
       case 'settings':
-        // Placeholder for settings page - you can create a Settings component later
-        return <Dashboard onNavigate={handleNavigation} currentView={currentView} />
+        return (
+          <ErrorBoundary level="page" resetOnPropsChange={true}>
+            <Dashboard onNavigate={handleNavigation} currentView={currentView} />
+          </ErrorBoundary>
+        )
+      case 'error-demo':
+        return (
+          <ErrorBoundary level="page" resetOnPropsChange={true}>
+            <ErrorBoundaryDemo />
+          </ErrorBoundary>
+        )
       default:
-        return <Dashboard onNavigate={handleNavigation} currentView={currentView} />
+        return (
+          <ErrorBoundary level="page" resetOnPropsChange={true}>
+            <Dashboard onNavigate={handleNavigation} currentView={currentView} />
+          </ErrorBoundary>
+        )
     }
   }
 
-  return renderView()
+  return (
+    <ErrorBoundary level="global">
+      {renderView()}
+    </ErrorBoundary>
+  )
 }
 
 export default App

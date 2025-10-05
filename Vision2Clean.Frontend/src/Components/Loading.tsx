@@ -25,14 +25,7 @@ const pulse = keyframes`
   }
 `;
 
-const shimmer = keyframes`
-  0% {
-    background-position: -200px 0;
-  }
-  100% {
-    background-position: calc(200px + 100%) 0;
-  }
-`;
+
 
 interface LoadingSpinnerProps {
   size?: number | 'small' | 'medium' | 'large';
@@ -174,8 +167,6 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   height = 40,
   animation = 'wave',
 }) => {
-  const theme = useTheme();
-
   const renderTextSkeleton = () => (
     <Box>
       {Array.from({ length: rows }).map((_, index) => (
