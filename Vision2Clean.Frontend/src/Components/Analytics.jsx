@@ -139,22 +139,39 @@ const sampleUser = { name: "Administrator", role: "Admin", email: "admin@vision2
 // -----------------------
 // Sample Data (Production: Replace with API calls)
 // -----------------------
-const performanceData = [
-  { date: '2024-09-01', requests: 245, accuracy: 94.2, responseTime: 1.2, errors: 3 },
-  { date: '2024-09-02', requests: 320, accuracy: 95.1, responseTime: 1.1, errors: 2 },
-  { date: '2024-09-03', requests: 289, accuracy: 93.8, responseTime: 1.3, errors: 4 },
-  { date: '2024-09-04', requests: 412, accuracy: 96.2, responseTime: 1.0, errors: 1 },
-  { date: '2024-09-05', requests: 378, accuracy: 95.5, responseTime: 1.1, errors: 2 },
-  { date: '2024-09-06', requests: 445, accuracy: 94.9, responseTime: 1.2, errors: 3 },
-  { date: '2024-09-07', requests: 392, accuracy: 95.8, responseTime: 1.0, errors: 1 },
-];
+const generatePerformanceData = () => {
+  const baseDate = new Date('2024-10-01');
+  return Array.from({ length: 30 }, (_, i) => {
+    const date = new Date(baseDate);
+    date.setDate(date.getDate() + i);
+    
+    // Simulate realistic data patterns
+    const dayOfWeek = date.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const baseRequests = isWeekend ? 200 : 350;
+    const variance = Math.random() * 0.3 - 0.15; // ±15% variance
+    
+    return {
+      date: date.toISOString().split('T')[0],
+      requests: Math.floor(baseRequests * (1 + variance)),
+      accuracy: 94 + Math.random() * 4, // 94-98%
+      responseTime: 0.8 + Math.random() * 0.8, // 0.8-1.6s
+      errors: Math.floor(Math.random() * 5),
+      cpuUsage: 60 + Math.random() * 20, // 60-80%
+      memoryUsage: 70 + Math.random() * 15, // 70-85%
+      throughput: Math.floor((baseRequests * (1 + variance)) / 60 * 24), // requests per minute
+    };
+  });
+};
+
+const performanceData = generatePerformanceData();
 
 const categoryBreakdown = [
-  { name: 'Plastic', value: 35, count: 1245, color: '#10a37f' },
-  { name: 'Organic', value: 28, count: 996, color: '#4ecdc4' },
-  { name: 'Paper', value: 20, count: 712, color: '#45b7d1' },
-  { name: 'Metal', value: 12, count: 427, color: '#96ceb4' },
-  { name: 'Glass', value: 5, count: 178, color: '#ffeaa7' },
+  { name: 'Plastic', value: 35, count: 1245, color: '#10a37f', trend: 'up', change: 2.3 },
+  { name: 'Organic', value: 28, count: 996, color: '#4ecdc4', trend: 'up', change: 1.8 },
+  { name: 'Paper', value: 20, count: 712, color: '#45b7d1', trend: 'down', change: -0.5 },
+  { name: 'Metal', value: 12, count: 427, color: '#96ceb4', trend: 'up', change: 0.9 },
+  { name: 'Glass', value: 5, count: 178, color: '#ffeaa7', trend: 'stable', change: 0.1 },
 ];
 
 const regionData = [
@@ -475,24 +492,46 @@ const CategoryDistribution = React.memo(({ data, loading }) => {
             </ResponsiveContainer>
           </Box>
           
-          <Box sx={{ ml: 2 }}>
+          <Box sx={{ ml: 2, minWidth: 200 }}>
             {data?.map((category, index) => (
-              <Box key={category.name} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Box 
+              <Box key={category.name} sx={{ mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                  <Box 
+                    sx={{ 
+                      width: 12, 
+                      height: 12, 
+                      borderRadius: '50%', 
+                      backgroundColor: category.color,
+                      mr: 1
+                    }} 
+                  />
+                  <Typography variant="body2" sx={{ minWidth: 60, fontWeight: 600 }}>
+                    {category.name}
+                  </Typography>
+                  <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    {getTrendIcon(category.trend === 'up' ? 'up' : category.trend === 'down' ? 'down' : null)}
+                    <Typography variant="caption" color={category.change > 0 ? 'success.main' : category.change < 0 ? 'error.main' : 'text.secondary'}>
+                      {category.change > 0 ? '+' : ''}{category.change}%
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="body2" color="text.secondary">
+                    {category.value}% • {formatNumber(category.count)} items
+                  </Typography>
+                </Box>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={category.value} 
                   sx={{ 
-                    width: 12, 
-                    height: 12, 
-                    borderRadius: '50%', 
-                    backgroundColor: category.color,
-                    mr: 1
-                  }} 
+                    height: 4, 
+                    borderRadius: 2,
+                    backgroundColor: alpha(category.color, 0.2),
+                    '& .MuiLinearProgress-bar': {
+                      backgroundColor: category.color,
+                    }
+                  }}
                 />
-                <Typography variant="body2" sx={{ minWidth: 60 }}>
-                  {category.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                  {category.value}% ({formatNumber(category.count)})
-                </Typography>
               </Box>
             ))}
           </Box>
@@ -854,6 +893,7 @@ const Analytics = ({ onNavigate, currentView = 'analytics' }) => {
                 { text: 'Dashboard', icon: <DashboardIcon />, view: 'dashboard' },
                 { text: 'Analytics', icon: <Assessment />, view: 'analytics' },
                 { text: 'Settings', icon: <SettingsIcon />, view: 'settings' },
+                { text: 'Error Demo', icon: <ErrorIcon />, view: 'error-demo' },
               ].map(({ text, icon, view }) => (
                 <Tooltip key={text} title={drawerOpen ? '' : text} placement="right">
                   <ListItemButton 
@@ -925,12 +965,38 @@ const Analytics = ({ onNavigate, currentView = 'analytics' }) => {
           <Box sx={{ mb: 4 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
               <Box>
-                <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 1 }}>
-                  Analytics Dashboard
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                  <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
+                    Analytics Dashboard
+                  </Typography>
+                  <Chip 
+                    icon={<CircularProgress size={12} sx={{ color: 'inherit !important' }} />}
+                    label="Live Data"
+                    color="success"
+                    variant="outlined"
+                    size="small"
+                    sx={{ fontWeight: 600 }}
+                  />
+                </Box>
+                <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
                   Comprehensive insights and performance metrics for Vision2Clean AI
                 </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Typography variant="caption" color="text.secondary">
+                    Last updated: {new Date().toLocaleTimeString()}
+                  </Typography>
+                  <Chip 
+                    label={`${formatNumber(3544)} total requests`}
+                    size="small"
+                    variant="outlined"
+                  />
+                  <Chip 
+                    label="95.2% accuracy"
+                    size="small"
+                    color="success"
+                    variant="outlined"
+                  />
+                </Box>
               </Box>
               
               <Stack direction="row" spacing={1}>
@@ -949,14 +1015,28 @@ const Analytics = ({ onNavigate, currentView = 'analytics' }) => {
                   </Select>
                 </FormControl>
                 
-                <Button
-                  variant="outlined"
-                  startIcon={<FileDownload />}
-                  onClick={handleExport}
-                  disabled={loading}
-                >
-                  Export
-                </Button>
+                <ButtonGroup variant="outlined" disabled={loading}>
+                  <Button
+                    startIcon={<FileDownload />}
+                    onClick={handleExport}
+                  >
+                    Export
+                  </Button>
+                  <Button
+                    size="small"
+                    onClick={(e) => {
+                      const menu = document.createElement('div');
+                      // Export menu logic would go here
+                      setSnackbar({ 
+                        open: true, 
+                        message: 'Export menu coming soon - CSV, PDF, Excel formats', 
+                        severity: 'info' 
+                      });
+                    }}
+                  >
+                    ⌄
+                  </Button>
+                </ButtonGroup>
                 
                 <Button
                   variant="outlined"
@@ -991,6 +1071,65 @@ const Analytics = ({ onNavigate, currentView = 'analytics' }) => {
               </Grid>
             ))}
           </Grid>
+
+          {/* AI Insights Panel */}
+          <Box sx={{ mb: 4 }}>
+            <Card elevation={2} sx={{ 
+              background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, ${alpha(theme.palette.secondary.main, 0.05)} 100%)`,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Box sx={{ 
+                    p: 1, 
+                    borderRadius: 2, 
+                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                    color: 'primary.main',
+                    mr: 2
+                  }}>
+                    <AnalyticsIcon />
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    AI Insights & Recommendations
+                  </Typography>
+                  <Chip 
+                    label="Powered by Vision2Clean AI"
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                    sx={{ ml: 'auto' }}
+                  />
+                </Box>
+                
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={4}>
+                    <Alert severity="success" sx={{ mb: 2 }}>
+                      <Typography variant="subtitle2" gutterBottom>Performance Excellence</Typography>
+                      <Typography variant="body2">
+                        Your AI accuracy is 3.2% above industry average. Plastic detection shows strongest performance.
+                      </Typography>
+                    </Alert>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <Alert severity="info" sx={{ mb: 2 }}>
+                      <Typography variant="subtitle2" gutterBottom>Optimization Opportunity</Typography>
+                      <Typography variant="body2">
+                        Response time increased 8% this week. Consider scaling resources during peak hours.
+                      </Typography>
+                    </Alert>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <Alert severity="warning" sx={{ mb: 2 }}>
+                      <Typography variant="subtitle2" gutterBottom>Regional Focus</Typography>
+                      <Typography variant="body2">
+                        East Zone accuracy below 94%. Review training data for regional waste variations.
+                      </Typography>
+                    </Alert>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Box>
 
           {/* Quick Navigation */}
           <Box sx={{ mb: 4 }}>
@@ -1082,12 +1221,47 @@ const Analytics = ({ onNavigate, currentView = 'analytics' }) => {
                 <SystemHealth data={data?.systemMetrics} loading={loading} />
               </Grid>
               <Grid item xs={12} md={6}>
-                <PerformanceChart 
-                  data={data?.performanceData}
-                  loading={loading}
-                  selectedMetric="responseTime"
-                  onMetricChange={setSelectedMetric}
-                />
+                <Card elevation={2}>
+                  <CardHeader 
+                    title="Real-time Activity Feed"
+                    subheader="Live system events and alerts"
+                  />
+                  <CardContent>
+                    <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
+                      {[
+                        { time: '2 min ago', event: 'High accuracy batch processed', type: 'success', details: '847 items • 97.2% accuracy' },
+                        { time: '5 min ago', event: 'API response time optimized', type: 'info', details: 'Average response: 0.89s' },
+                        { time: '12 min ago', event: 'Memory usage spike detected', type: 'warning', details: 'Peak: 85% • Auto-scaled' },
+                        { time: '23 min ago', event: 'New model deployment successful', type: 'success', details: 'Version 2.1.4 deployed' },
+                        { time: '31 min ago', event: 'Scheduled maintenance completed', type: 'info', details: 'Database optimization' },
+                        { time: '45 min ago', event: 'Regional performance updated', type: 'info', details: 'West Zone: +2.3% efficiency' },
+                      ].map((activity, index) => (
+                        <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', mb: 2, pb: 2, borderBottom: index < 5 ? `1px solid ${theme.palette.divider}` : 'none' }}>
+                          <Box sx={{ 
+                            width: 8, 
+                            height: 8, 
+                            borderRadius: '50%', 
+                            backgroundColor: activity.type === 'success' ? 'success.main' : activity.type === 'warning' ? 'warning.main' : 'info.main',
+                            mt: 1,
+                            mr: 2,
+                            flexShrink: 0
+                          }} />
+                          <Box sx={{ flex: 1 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                              {activity.event}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                              {activity.details}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {activity.time}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      ))}
+                    </Box>
+                  </CardContent>
+                </Card>
               </Grid>
             </Grid>
           )}
