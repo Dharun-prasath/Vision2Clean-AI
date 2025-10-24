@@ -59,7 +59,7 @@ export default function Dashboard() {
   const [darkMode, setDarkMode] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  // Toggle dark mode by adding/removing .dark on html
+  
   const handleDarkMode = () => {
     setDarkMode((d) => {
       if (!d) {
