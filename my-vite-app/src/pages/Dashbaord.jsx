@@ -56,9 +56,29 @@ function StatCard({ title, value, delta, color = 'emerald' }) {
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [darkMode, setDarkMode] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  // Toggle dark mode by adding/removing .dark on html
+  const handleDarkMode = () => {
+    setDarkMode((d) => {
+      if (!d) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+      return !d
+    })
+  }
+
+  // Simulate inference loading
+  const handleInference = () => {
+    setLoading(true)
+    setTimeout(() => setLoading(false), 2000)
+  }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-300">
       <div className="flex">
         {/* Sidebar */}
         <aside className={`flex-shrink-0 ${sidebarOpen ? 'w-64' : 'w-16'} bg-white dark:bg-slate-800 border-r dark:border-slate-700 transition-width duration-200`}>
@@ -74,20 +94,39 @@ export default function Dashboard() {
             </div>
 
             <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
-              <a className="block px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">Dashboard</a>
-              <a className="block px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">Datasets</a>
-              <a className="block px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">Models</a>
-              <a className="block px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">Training</a>
-              <a className="block px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">Inference</a>
-              <a className="block px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">Settings</a>
+              <a className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
+                <span className="material-icons text-emerald-500">dashboard</span> Dashboard
+              </a>
+              <a className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
+                <span className="material-icons text-blue-500">folder</span> Datasets
+              </a>
+              <a className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
+                <span className="material-icons text-purple-500">memory</span> Models
+              </a>
+              <a className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
+                <span className="material-icons text-pink-500">build</span> Training
+              </a>
+              <a className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
+                <span className="material-icons text-sky-500">search</span> Inference
+              </a>
+              <a className="flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
+                <span className="material-icons text-slate-500">settings</span> Settings
+              </a>
             </nav>
 
-            <div className="p-4 border-t dark:border-slate-700">
+            <div className="p-4 border-t dark:border-slate-700 flex items-center justify-between">
               {sidebarOpen ? (
                 <div className="text-sm text-slate-600 dark:text-slate-300">v0.1 • © {new Date().getFullYear()}</div>
               ) : (
                 <div className="text-xs text-center text-slate-500">v0.1</div>
               )}
+              <button
+                className={`ml-2 px-2 py-1 rounded text-xs font-medium ${darkMode ? 'bg-slate-800 text-white' : 'bg-slate-200 text-slate-700'} transition-all`}
+                onClick={handleDarkMode}
+                title="Toggle dark mode"
+              >
+                {darkMode ? '🌙' : '☀️'}
+              </button>
             </div>
           </div>
         </aside>
@@ -110,8 +149,15 @@ export default function Dashboard() {
                   <span className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></span>
                   Model Active
                 </div>
-                <button className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 shadow-md transition-all">
-                  Run Inference
+                <button
+                  className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 shadow-md transition-all flex items-center gap-2"
+                  onClick={handleInference}
+                  disabled={loading}
+                >
+                  {loading && (
+                    <span className="animate-spin h-5 w-5 border-2 border-white border-t-emerald-500 rounded-full inline-block mr-2"></span>
+                  )}
+                  {loading ? 'Running...' : 'Run Inference'}
                 </button>
               </div>
             </div>
