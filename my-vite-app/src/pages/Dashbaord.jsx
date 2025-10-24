@@ -71,7 +71,7 @@ export default function Dashboard() {
     })
   }
 
-  // Simulate inference loading
+
   const handleInference = () => {
     setLoading(true)
     setTimeout(() => setLoading(false), 2000)
